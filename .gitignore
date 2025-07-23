@@ -258,7 +258,7 @@ secrets.json
 config/secrets.py
 
 # Machine learning models
-models/
+# models/
 *.pkl
 *.joblib
 *.h5
