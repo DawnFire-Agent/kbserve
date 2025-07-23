@@ -6,17 +6,24 @@ from models.chunk import Chunk
 from models.document import Document
 
 class RetrievalAugmentedGenerator:
-    def __init__(self, vectordb, model_name: str = "gpt-3.5-turbo"):
+    def __init__(self, vectordb, model_name: str = "qwen3:32b"):
         self.vectordb = vectordb
         self.model_name = model_name
-        self.encoding = tiktoken.encoding_for_model(model_name)
+        # 兼容qwen3:32b模型的分词器设置
+        if model_name.startswith("qwen3"):
+            # qwen3系列模型没有官方tiktoken分词器，需使用兼容的分词器或估算
+            # 这里简单用cl100k_base作为近似，或根据实际情况替换
+            self.encoding = tiktoken.get_encoding("cl100k_base")
+        else:
+            self.encoding = tiktoken.encoding_for_model(model_name)
         
         # 初始化OpenAI客户端
         api_key = os.getenv("OPENAI_API_KEY")
+        base_url= os.getenv("OPENAI_API_BASE_URL")
         if not api_key:
             print("Warning: OPENAI_API_KEY not set in environment variables")
-        self.client = OpenAI(api_key=api_key) if api_key else None
-    
+        self.client = OpenAI(api_key=api_key, base_url=base_url) if api_key else None
+
     async def generate_answer(self, question: str, top_k: int = 5, max_context_tokens: int = 3000) -> Tuple[str, List[dict]]:
         """结合检索结果和大模型生成答案"""
         # 检索相关上下文
