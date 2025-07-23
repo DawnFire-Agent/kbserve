@@ -11,6 +11,10 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
+# 杀死之前的uvicorn进程
+echo "检查并杀死已有的uvicorn进程..."
+pkill -f "uvicorn main:app" || true
+
 # 安装依赖
 echo "安装Python依赖..."
 pip install -r requirements.txt
