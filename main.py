@@ -53,7 +53,12 @@ app.include_router(query_controller.router, prefix="/api/query", tags=["问答"]
 
 # 数据库配置
 TORTOISE_ORM = {
-    "connections": {"default": os.environ.get("DATABASE_URL", "sqlite://db.sqlite3")},
+    "connections": {
+        "default": os.environ.get(
+            "DATABASE_URL", 
+            "mysql://root:p1ssw0rd@127.0.0.1:3306/dawnfire_db"
+        )
+    },
     "apps": {
         "models": {
             "models": ["models.document", "models.chunk"],

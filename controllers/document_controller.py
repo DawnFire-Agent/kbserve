@@ -35,7 +35,9 @@ async def upload_document(file: UploadFile = File(...)):
         try:
             # 解析文档内容
             text = document_parser.parse_uploaded_file(file)
+            # print(f"解析后的文本长度: {(text)}")
             cleaned_text = text_processor.clean_text(text)
+            print(f"清理后的文本: {cleaned_text}")
             
             if not cleaned_text.strip():
                 await doc.delete()
@@ -43,6 +45,7 @@ async def upload_document(file: UploadFile = File(...)):
             
             # 文本分段
             chunks = text_processor.chunk_text(cleaned_text, doc.id)
+            print(f"分段: {chunks}")
             
             if not chunks:
                 await doc.delete()
